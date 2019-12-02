@@ -1,0 +1,8 @@
+﻿  Source.cpp
+Source.obj : error LNK2019: ёё√ыър эр эхЁрчЁх°хээ√щ тэх°эшщ ёшьтюы box т ЇєэъЎшш main
+Source.obj : error LNK2019: ёё√ыър эр эхЁрчЁх°хээ√щ тэх°эшщ ёшьтюы endwin т ЇєэъЎшш main
+Source.obj : error LNK2019: ёё√ыър эр эхЁрчЁх°хээ√щ тэх°эшщ ёшьтюы initscr т ЇєэъЎшш main
+Source.obj : error LNK2019: ёё√ыър эр эхЁрчЁх°хээ√щ тэх°эшщ ёшьтюы wgetch т ЇєэъЎшш main
+Source.obj : error LNK2001: эхЁрчЁх°хээ√щ тэх°эшщ ёшьтюы "stdscr"
+C:\pdcurses\wincon\pdcurses.lib : warning LNK4272: Єшя ъюья№■ЄхЁр сшсышюЄхъш "x86" ъюэЇышъЄєхЄ ё Єшяюь Ўхыхтюую ъюья№■ЄхЁр "x64"
+C:\Users\lipat\Documents\projects\Project1\x64\Debug\Project1.exe : fatal error LNK1120: эхЁрчЁх°хээ√ї тэх°эшї ¤ыхьхэЄют: 5

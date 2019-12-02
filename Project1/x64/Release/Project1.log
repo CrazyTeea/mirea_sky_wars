@@ -1,0 +1,7 @@
+﻿  Source.cpp
+Source.obj : error LNK2001: неразрешенный внешний символ "box"
+Source.obj : error LNK2001: неразрешенный внешний символ "endwin"
+Source.obj : error LNK2001: неразрешенный внешний символ "initscr"
+Source.obj : error LNK2001: неразрешенный внешний символ "wgetch"
+Source.obj : error LNK2001: неразрешенный внешний символ "stdscr"
+C:\Users\lipat\Documents\projects\Project1\x64\Release\Project1.exe : fatal error LNK1120: неразрешенных внешних элементов: 5
