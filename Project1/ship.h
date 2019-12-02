@@ -1,6 +1,7 @@
 #pragma once
 #include "point.h"
 #include <vector>
+#include <algorithm>
 class ship
 {
 private:
@@ -10,5 +11,7 @@ public:
 	void moveY(int *y);
 	void moveX(int *x);
 	void show();
+	bool ifLeft();
+	bool ifRight();
 };
 

@@ -28,3 +28,13 @@ void ship::show()
 		_point.show();
 	}
 }
+
+bool ship::ifLeft()
+{
+	return std::find_if(pointers.begin(), pointers.end(), [](point _p) {return _p.getX() <= 1; }) != pointers.end() ? true : false;
+}
+
+bool ship::ifRight()
+{
+	return std::find_if(pointers.begin(), pointers.end(), [](point _p) {return _p.getX() >= (COLS - 22); }) != pointers.end() ? true : false;
+}
