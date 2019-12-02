@@ -102,11 +102,6 @@ void _input(WINDOW*game,WINDOW *menu,ship *p,game_inputs *_g_i) {
 			}
 			break;
 		}
-		case 0x71: {
-			beep();
-			_g_i->setExit(!_g_i->getExit());
-			break;
-		}
 		default:
 			//wprintw(menu, "%X", key);
 			break;
