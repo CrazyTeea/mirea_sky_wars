@@ -1,22 +1,34 @@
 #include <cstdio>
 #include <thread>
 //#include <curses.h>
-#include "point.h"
+#include "ship.h"
 
 using namespace std;
-void _input(WINDOW*game,WINDOW *menu,point *p,bool* exit) {
-	
+void _input(WINDOW*game,WINDOW *menu,ship *p,bool* exit) {
+	int x = 1, y = 1;
 	while (!*exit)
 	{
 		
 		int key = getch();
 		switch (key)
 		{
-		case KEY_DOWN:
-			p->moveDown();
+		case KEY_RIGHT: {
+			x = 1;
+			p->moveX(&x);
 			break;
+		}
+		case KEY_LEFT: {
+			x = -1;
+			p->moveX(&x);
+			break;
+		}
 		case KEY_UP: {
-			int y = -1;
+			y = -1;
+			p->moveY(&y);
+			break;
+		}
+		case KEY_DOWN: {
+			y = 1;
 			p->moveY(&y);
 			break;
 		}
@@ -26,14 +38,25 @@ void _input(WINDOW*game,WINDOW *menu,point *p,bool* exit) {
 		default:
 			break;
 		}
-		
+		//clear();
+	//	wprintw(game,"x=%d y=%d", x, y);
+		//refresh();
 
 	}
 }
 void _draw(WINDOW *game,WINDOW *menu,bool *exit) {
 //	printw("%b", *exit);
-	point* p = new point(game,5,5,"|");
-	thread input(_input,game,menu,p, exit);
+	//point* p = new point(game,5,5,"|");
+
+	vector <point> vector_ship_player;
+	vector_ship_player.push_back(point(game, 22, 26, "*"));
+	vector_ship_player.push_back(point(game, 23, 25, "*"));
+	vector_ship_player.push_back(point(game, 24, 24, "*"));
+	vector_ship_player.push_back(point(game, 25, 25, "*"));
+	vector_ship_player.push_back(point(game, 26, 26, "*"));
+	ship* ship_player = new ship(&vector_ship_player);
+
+	thread input(_input,game,menu,ship_player, exit);
 	while (!*exit)
 	{
 	//	clear();
@@ -42,7 +65,7 @@ void _draw(WINDOW *game,WINDOW *menu,bool *exit) {
 		wclear(menu);
 		box(game, 0, 0);
 		box(menu, 1, 1);
-		p->show();
+		ship_player->show();
 		//refresh(); 
 		wrefresh(game);
 		wrefresh(menu);
