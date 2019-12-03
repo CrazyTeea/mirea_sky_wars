@@ -5,7 +5,7 @@ ship::ship(std::vector<point>* _pointers)
 	pointers = *_pointers;
 }
 
-void ship::moveY(int *y)
+void ship::moveY(const int& y)
 {
 	for (auto &_point:pointers)
 	{
@@ -13,7 +13,7 @@ void ship::moveY(int *y)
 	}
 }
 
-void ship::moveX(int *x)
+void ship::moveX(const int& x)
 {
 	for (auto& _point : pointers)
 	{
