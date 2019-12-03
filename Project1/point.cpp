@@ -21,11 +21,6 @@ void point::moveY(int* _y)
 	y += *_y;
 }
 
-void point::moveDown(int _y)
-{
-	y += _y;
-}
-
 void point::moveX(int* _x)
 {
 	x += *_x;

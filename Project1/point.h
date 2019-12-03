@@ -11,7 +11,6 @@ public:
 	point(WINDOW* _w);
 	point(WINDOW *w,int _x, int _y,const char *_char);
 	void moveY(int* _y);
-	void moveDown(int _y = 1);
 	void moveX(int* _x);
 	int getX();
 	int getY();
