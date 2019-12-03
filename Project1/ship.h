@@ -1,5 +1,9 @@
 #pragma once
+#ifndef POINT_H
+#define POINT_H
 #include "point.h"
+#endif // !POINT_H
+#include "bullet.h"
 #include <vector>
 #include <algorithm>
 class ship
@@ -8,8 +12,8 @@ private:
 	std::vector <point> pointers;
 public:
 	ship(std::vector <point>* _pointers);
-	void moveY(int *y);
-	void moveX(int *x);
+	void moveY(const int& y);
+	void moveX(const int& x);
 	void show();
 	bool ifLeft();
 	bool ifRight();

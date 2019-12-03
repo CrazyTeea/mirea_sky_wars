@@ -24,12 +24,18 @@
     <ClCompile Include="ship.cpp">
       <Filter>Исходные файлы</Filter>
     </ClCompile>
+    <ClCompile Include="bullet.cpp">
+      <Filter>Исходные файлы</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="point.h">
       <Filter>Файлы заголовков</Filter>
     </ClInclude>
     <ClInclude Include="ship.h">
+      <Filter>Файлы заголовков</Filter>
+    </ClInclude>
+    <ClInclude Include="bullet.h">
       <Filter>Файлы заголовков</Filter>
     </ClInclude>
   </ItemGroup>

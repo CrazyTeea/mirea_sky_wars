@@ -8,12 +8,17 @@ private:
 	WINDOW* _window;
 	const char *_ch;
 public:
-	point(WINDOW* _w);
+
+	point();
 	point(WINDOW *w,int _x, int _y,const char *_char);
-	void moveY(int* _y);
-	void moveX(int* _x);
+	void moveY(const int& _y);
+	void moveX(const int& _x);
 	int getX();
 	int getY();
+	void setX(const int& _x);
+	void setY(const int& _y);
 	void show();
+	void setWindow(WINDOW* w);
+	WINDOW* getWindow();
 };
 

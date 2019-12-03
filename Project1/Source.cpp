@@ -46,7 +46,6 @@ public:
 };
 
 void _input(WINDOW*game,WINDOW *menu,ship *p,game_inputs *_g_i) {
-	int x = 1, menu_choice = 1;
 	while (!_g_i->getExit())
 	{
 		
@@ -54,15 +53,15 @@ void _input(WINDOW*game,WINDOW *menu,ship *p,game_inputs *_g_i) {
 		switch (key)
 		{
 		case KEY_RIGHT: {
-			x = 1;
+			
 			if (!p->ifRight())
-				p->moveX(&x);
+				p->moveX(1);
 			break;
 		}
 		case KEY_LEFT: {
-			x = -1;
+			
 			if (!p->ifLeft())
-				p->moveX(&x);
+				p->moveX(-1);
 			break;
 		}
 		case KEY_UP: {
@@ -137,11 +136,8 @@ void _draw(WINDOW *game,WINDOW *menu, game_inputs* _g_i) {
 	thread input(_input,game,menu,ship_player, _g_i);
 	while (!_g_i->getExit())
 	{
-
 		wclear(game);
-
-		wclear(menu);
-
+		//wclear(menu);
 		box(game, 0, 0);
 		box(menu, 1, 1);
 		for (int i = 0; i < sizeof(menu_items) / sizeof(menu_items[0]); i++)
