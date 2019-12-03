@@ -39,7 +39,7 @@ void _draw(WINDOW *game,WINDOW *menu,bool *exit) {
 	//	clear();
 		//clear();
 		wclear(game);
-		wclear(menu);
+		wclear(menu);\
 		box(game, 0, 0);
 		box(menu, 1, 1);
 		p->show();
