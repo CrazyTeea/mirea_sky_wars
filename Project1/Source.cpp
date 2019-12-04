@@ -3,6 +3,7 @@
 #include <string>
 //#include <curses.h>
 #include "ship.h"
+#include "bullet.h"
 
 using namespace std;
 
@@ -80,6 +81,7 @@ void _input(WINDOW*game,WINDOW *menu,ship *p,game_inputs *_g_i) {
 			//p->moveY(&y);
 			break;
 		}
+		case 0xD:
 		case 0xA: {
 			//beep();
 			switch (_g_i->getMenuItem())
@@ -101,8 +103,15 @@ void _input(WINDOW*game,WINDOW *menu,ship *p,game_inputs *_g_i) {
 			}
 			break;
 		}
+		case KEY_RESIZE: {
+			clear();
+			wrefresh(game);
+			wrefresh(menu);
+			refresh();
+			break;
+		}
 		default:
-			//wprintw(menu, "%X", key);
+			wprintw(menu, "%X", key);
 			break;
 		}
 
@@ -112,6 +121,7 @@ void _input(WINDOW*game,WINDOW *menu,ship *p,game_inputs *_g_i) {
 void _draw(WINDOW *game,WINDOW *menu, game_inputs* _g_i) {
 
 	vector <point> vector_ship_player;
+	vector <bullet> vector_bullet;
 	string menu_items[3] = { "Start","From save","Exit" };
 	/**
 				 *	
@@ -134,10 +144,18 @@ void _draw(WINDOW *game,WINDOW *menu, game_inputs* _g_i) {
 	ship* ship_player = new ship(&vector_ship_player);
 
 	thread input(_input,game,menu,ship_player, _g_i);
+
+
+
 	while (!_g_i->getExit())
 	{
-		wclear(game);
+		//
 		//wclear(menu);
+		//wclear(game);
+		//this_thread::sleep_for(100ms);
+		//
+		wrefresh(game);
+		wrefresh(menu);
 		box(game, 0, 0);
 		box(menu, 1, 1);
 		for (int i = 0; i < sizeof(menu_items) / sizeof(menu_items[0]); i++)
@@ -157,11 +175,25 @@ void _draw(WINDOW *game,WINDOW *menu, game_inputs* _g_i) {
 
 		if (_g_i->getStart())
 		{
+			vector<point> kek = ship_player->getWeapons();
+			
+			wprintw(menu, "%X", kek.size());
+
+			for (auto weapon_point : kek) {
+				vector_bullet.push_back(bullet(weapon_point));
+			}
+			for (auto& b:vector_bullet)
+			{
+				
+				b.move(true);
+				b.show();
+			}
+		//	this_thread::sleep_for(100ms);
 			ship_player->show();
 		}
-		wrefresh(game);
-		wrefresh(menu);
 
+		//refresh();
+		//
 	}
 	input.join();
 }
@@ -180,9 +212,10 @@ int main(int argc, char* argv[]) {
 	init_pair(1, COLOR_RED, COLOR_BLACK);
 	init_pair(2, COLOR_WHITE, COLOR_BLACK);
 	noecho();
-	//raw();
+	raw();
 	//nonl();
 	curs_set(false);
+	clear();
 	WINDOW* game = newwin(LINES, COLS-20, 0, 0);
 	WINDOW* menu = newwin(LINES, 19, 0, COLS / 2);
 	mvwin(game, 0, 0);

@@ -3,8 +3,8 @@
 #define POINT_H
 #include "point.h"
 #endif // !POINT_H
-#include "bullet.h"
 #include <vector>
+#include <iterator>
 #include <algorithm>
 class ship
 {
@@ -15,6 +15,7 @@ public:
 	void moveY(const int& y);
 	void moveX(const int& x);
 	void show();
+	std::vector<point> getWeapons();
 	bool ifLeft();
 	bool ifRight();
 };
