@@ -12,7 +12,7 @@ private:
 	point _pointers[3];
 public:
 	bullet();
-	bullet(WINDOW *w,const int& startX, const int& startY);
+	bullet(const point& start);
 	void move(const bool& up);
 	void show();
 };

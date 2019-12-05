@@ -1,5 +1,7 @@
 #include "point.h"
 
+
+
 point::point()
 {
 	x = 0;
@@ -16,14 +18,34 @@ point::point(WINDOW *w,int _x, int _y,const char *_char)
 	_window = w;
 }
 
+void point::cleanPoint()
+{
+	mvwaddch(_window, y, x, ' ');
+}
+
 void point::moveY(const int& _y)
 {
+	cleanPoint();
 	y += _y;
 }
 
 void point::moveX(const int& _x)
 {
+	cleanPoint();
 	x += _x;
+}
+
+const char* point::getChar()
+{
+	return _ch;
+}
+
+void point::setChar(const char& ch)
+{
+	std::string b;
+	b.push_back(ch);
+	_ch = b.c_str();
+	delete &b;
 }
 
 int point::getX()

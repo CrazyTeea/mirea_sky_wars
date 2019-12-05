@@ -4,17 +4,12 @@ bullet::bullet()
 {
 }
 
-bullet::bullet(WINDOW *w,const int& startX, const int& startY)
+bullet::bullet(const point& start)
 {
-	_pointers[0].setX(startX);
-	_pointers[1].setX(startX);
-	_pointers[2].setX(startX);
-	_pointers[0].setX(startX);
-	_pointers[1].setWindow(w);
-	_pointers[2].setWindow(w);
-	_pointers[0].setWindow(w);
-	_pointers[1].setY(startY-1);
-	_pointers[2].setY(startY-2);
+	for (auto& p : _pointers)
+		p = start;
+	_pointers[1].moveY(-1);
+	_pointers[2].moveY(-2);
 }
 
 void bullet::move(const bool& up)
