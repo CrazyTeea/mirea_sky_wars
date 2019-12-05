@@ -13,22 +13,25 @@ private:
 	bool exit;
 	bool start;
 	int m_item;
+	int frame_rate;
 
 public:
 	game_inputs() {
 		exit = 0;
 		m_item = 0;
 		start = 0;
+		frame_rate = 100;
 	}
-	game_inputs(const bool& _exit, const int& _m_item,const bool& _start) {
+	game_inputs(const bool& _exit, const int& _m_item,const bool& _start,const int& f_r) {
 		exit = _exit;
 		m_item = _m_item;
 		start = _start;
+		frame_rate = f_r;
 	}
-	bool getExit() {
+	const bool& getExit() {
 		return exit;
 	}
-	int getMenuItem() {
+	const int& getMenuItem() {
 		return m_item;
 	}
 	void setExit(const bool& e) {
@@ -37,11 +40,14 @@ public:
 	void setMenuItem(const int& i) {
 		m_item = i;
 	}
-	bool getStart() {
+	const bool& getStart() {
 		return start;
 	}
 	void setStart(const bool& s) {
 		start = s;
+	}
+	int& getFrameRate() {
+		return frame_rate;
 	}
 
 };
@@ -128,18 +134,18 @@ void _draw(WINDOW *game,WINDOW *menu, game_inputs* _g_i) {
 			*  *   *  *
 			***	    ***
 	**/
-	vector_ship_player.push_back(point(game, 20, 27, "|"));
-	vector_ship_player.push_back(point(game, 20, 28, "*"));
-	vector_ship_player.push_back(point(game, 21, 28, "*"));
-	vector_ship_player.push_back(point(game, 22, 28, "*"));
-	vector_ship_player.push_back(point(game, 23, 27, "*"));
-	vector_ship_player.push_back(point(game, 24, 26, "*"));
-	vector_ship_player.push_back(point(game, 24, 25, "|"));
-	vector_ship_player.push_back(point(game, 25, 27, "*"));
-	vector_ship_player.push_back(point(game, 26, 28, "*"));
-	vector_ship_player.push_back(point(game, 27, 28, "*"));
-	vector_ship_player.push_back(point(game, 28, 28, "*"));
-	vector_ship_player.push_back(point(game, 28, 27, "|"));
+	vector_ship_player.push_back(point(game, 20, LINES - 3, "|"));
+	vector_ship_player.push_back(point(game, 20, LINES - 2, "*"));
+	vector_ship_player.push_back(point(game, 21, LINES - 2, "*"));
+	vector_ship_player.push_back(point(game, 22, LINES - 2, "*"));
+	vector_ship_player.push_back(point(game, 23, LINES - 3, "*"));
+	vector_ship_player.push_back(point(game, 24, LINES - 4, "*"));
+	vector_ship_player.push_back(point(game, 24, LINES - 5, "|"));
+	vector_ship_player.push_back(point(game, 25, LINES - 3, "*"));
+	vector_ship_player.push_back(point(game, 26, LINES - 2, "*"));
+	vector_ship_player.push_back(point(game, 27, LINES - 2, "*"));
+	vector_ship_player.push_back(point(game, 28, LINES - 2, "*"));
+	vector_ship_player.push_back(point(game, 28, LINES - 3, "|"));
 
 	ship* ship_player = new ship(&vector_ship_player);
 
@@ -158,7 +164,7 @@ void _draw(WINDOW *game,WINDOW *menu, game_inputs* _g_i) {
 		wrefresh(menu);
 		box(game, 0, 0);
 		box(menu, 1, 1);
-		for (int i = 0; i < sizeof(menu_items) / sizeof(menu_items[0]); i++)
+		for (size_t i = 0; i < sizeof(menu_items) / sizeof(menu_items[0]); i++)
 		{
 			if (i == _g_i->getMenuItem()) {
 				mvwaddch(menu, 10 + i, 4, '>');
@@ -177,7 +183,7 @@ void _draw(WINDOW *game,WINDOW *menu, game_inputs* _g_i) {
 		{
 			vector<point> kek = ship_player->getWeapons();
 			
-			wprintw(menu, "%X", kek.size());
+			//wprintw(menu, "%X", kek.size());
 
 			for (auto weapon_point : kek) {
 				vector_bullet.push_back(bullet(weapon_point));
@@ -188,7 +194,7 @@ void _draw(WINDOW *game,WINDOW *menu, game_inputs* _g_i) {
 				b.move(true);
 				b.show();
 			}
-		//	this_thread::sleep_for(100ms);
+			this_thread::sleep_for(std::chrono::microseconds(_g_i->getFrameRate()));
 			ship_player->show();
 		}
 
@@ -201,6 +207,7 @@ void _draw(WINDOW *game,WINDOW *menu, game_inputs* _g_i) {
 
 int main(int argc, char* argv[]) {
 	initscr();
+	int frame_rate = argc < 2 ? 100 : stoi(argv[1]);
 
 	if (!has_colors())
 	{
@@ -221,7 +228,7 @@ int main(int argc, char* argv[]) {
 	mvwin(game, 0, 0);
 	mvwin(menu, 0, COLS - 20);
 	keypad(stdscr, true);
-	game_inputs _game_inputs(false, 0, false);
+	game_inputs _game_inputs(false, 0, false,frame_rate);
 
 	thread draw(_draw,game, menu,&_game_inputs);
 	draw.join();
