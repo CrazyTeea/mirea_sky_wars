@@ -7,6 +7,8 @@
 
 using namespace std;
 
+#define BULLET_COUNT 6
+
 struct game_inputs
 {
 private:
@@ -151,7 +153,7 @@ void _draw(WINDOW *game,WINDOW *menu, game_inputs* _g_i) {
 
 	thread input(_input,game,menu,ship_player, _g_i);
 
-
+	
 
 	while (!_g_i->getExit())
 	{
@@ -181,20 +183,25 @@ void _draw(WINDOW *game,WINDOW *menu, game_inputs* _g_i) {
 
 		if (_g_i->getStart())
 		{
-			vector<point> kek = ship_player->getWeapons();
+			
 			
 			//wprintw(menu, "%X", kek.size());
-
+			vector<point> kek = ship_player->getWeapons();
 			for (auto weapon_point : kek) {
+				if (vector_bullet.size() >= BULLET_COUNT)
+					break;
 				vector_bullet.push_back(bullet(weapon_point));
+
 			}
 			for (auto& b:vector_bullet)
 			{
 				
 				b.move(true);
 				b.show();
+				if (b.getY() < 0)
+					vector_bullet.erase(find_if(vector_bullet.begin(), vector_bullet.end(), [&](bullet& p) {return p.getY() < 0; }));
 			}
-			this_thread::sleep_for(std::chrono::microseconds(_g_i->getFrameRate()));
+			this_thread::sleep_for(std::chrono::milliseconds(_g_i->getFrameRate()));
 			ship_player->show();
 		}
 

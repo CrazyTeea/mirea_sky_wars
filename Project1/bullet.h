@@ -9,11 +9,12 @@
 class bullet
 {
 private:
-	point _pointers[3];
+	point _pointers;
 public:
 	bullet();
 	bullet(const point& start);
 	void move(const bool& up);
 	void show();
+	const int& getY();
 };
 
