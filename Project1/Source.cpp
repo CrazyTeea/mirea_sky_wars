@@ -7,7 +7,7 @@
 
 using namespace std;
 
-#define BULLET_COUNT 6
+#define BULLET_COUNT 3
 
 struct game_inputs
 {
@@ -113,6 +113,9 @@ void _input(WINDOW*game,WINDOW *menu,ship *p,game_inputs *_g_i) {
 		}
 		case KEY_RESIZE: {
 			clear();
+			wresize(game, LINES, COLS - 20);
+			wresize(menu, LINES, 19);
+			mvwin(menu, 0, COLS - 20);
 			wrefresh(game);
 			wrefresh(menu);
 			refresh();
@@ -195,11 +198,14 @@ void _draw(WINDOW *game,WINDOW *menu, game_inputs* _g_i) {
 			}
 			for (auto& b:vector_bullet)
 			{
-				
+				//wattroff(game, COLOR_PAIR(3));
+			//	wattron(game, COLOR_PAIR(3));
+				if (b.getY() < 0)
+					vector_bullet.clear();
 				b.move(true);
 				b.show();
-				if (b.getY() < 0)
-					vector_bullet.erase(find_if(vector_bullet.begin(), vector_bullet.end(), [&](bullet& p) {return p.getY() < 0; }));
+				
+					//vector_bullet.erase(find_if(vector_bullet.begin(), vector_bullet.end(), [&](bullet& p) {return p.getY() < 1; }));
 			}
 			this_thread::sleep_for(std::chrono::milliseconds(_g_i->getFrameRate()));
 			ship_player->show();
@@ -225,6 +231,7 @@ int main(int argc, char* argv[]) {
 	start_color();
 	init_pair(1, COLOR_RED, COLOR_BLACK);
 	init_pair(2, COLOR_WHITE, COLOR_BLACK);
+	init_pair(3, COLOR_YELLOW, COLOR_BLACK);
 	noecho();
 	raw();
 	//nonl();
