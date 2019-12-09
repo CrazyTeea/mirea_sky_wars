@@ -6,21 +6,22 @@ bullet::bullet()
 
 bullet::bullet(const point& start)
 {
-	for (auto& p : _pointers)
-		p = start;
-	_pointers[1].moveY(-1);
-	_pointers[2].moveY(-2);
+	_pointers = start;
+	//_pointers.setChar('^');
 }
 
 void bullet::move(const bool& up)
 {
-	for (auto& p : _pointers)
-		p.moveY(up ? -1 : 1);
+	_pointers.moveY(up ? -1 : 1);
 }
 
 void bullet::show()
 {
-	for (auto& p : _pointers)
-		p.show();
+	_pointers.show();
+}
+
+const int& bullet::getY()
+{
+	return _pointers.getY();
 }
 

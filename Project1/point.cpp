@@ -45,7 +45,8 @@ void point::setChar(const char& ch)
 	std::string b;
 	b.push_back(ch);
 	_ch = b.c_str();
-	delete &b;
+
+	delete& b;
 }
 
 int point::getX()
