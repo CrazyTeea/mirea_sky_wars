@@ -71,6 +71,7 @@ void point::setY(const int& _y)
 
 void point::show()
 {
+	
 	mvwaddstr(_window,y,x,_ch);
 }
 

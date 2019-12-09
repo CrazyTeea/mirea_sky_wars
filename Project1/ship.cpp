@@ -47,3 +47,13 @@ bool ship::ifRight()
 {
 	return std::find_if(pointers.begin(), pointers.end(), [](point _p) {return _p.getX() >= (COLS - 22); }) != pointers.end() ? true : false;
 }
+
+bool ship::isUp()
+{
+	return std::find_if(pointers.begin(), pointers.end(), [](point _p) {return _p.getY() < 1; }) != pointers.end() ? true : false;
+}
+
+bool ship::isDown()
+{
+	return std::find_if(pointers.begin(), pointers.end(), [](point _p) {return _p.getY() > LINES; }) != pointers.end() ? true : false;
+}

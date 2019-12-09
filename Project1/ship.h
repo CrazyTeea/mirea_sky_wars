@@ -18,5 +18,7 @@ public:
 	std::vector<point> getWeapons();
 	bool ifLeft();
 	bool ifRight();
+	bool isUp();
+	bool isDown();
 };
 

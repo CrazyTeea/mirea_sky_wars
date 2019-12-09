@@ -1,6 +1,7 @@
 #include <cstdio>
 #include <thread>
 #include <string>
+#include <random>
 //#include <curses.h>
 #include "ship.h"
 #include "bullet.h"
@@ -8,6 +9,14 @@
 using namespace std;
 
 #define BULLET_COUNT 3
+
+int randint(int max, int min = 0)
+{
+	return (min <= max) ?
+		((rand() % ((max + 1) - min)) + min) :
+		((rand() % ((min + 1) - max)) + max);
+}
+
 
 struct game_inputs
 {
@@ -129,31 +138,66 @@ void _input(WINDOW*game,WINDOW *menu,ship *p,game_inputs *_g_i) {
 
 	}
 }
+
 void _draw(WINDOW *game,WINDOW *menu, game_inputs* _g_i) {
 
 	vector <point> vector_ship_player;
+	vector <point> vector_ship_enemy;
 	vector <bullet> vector_bullet;
 	string menu_items[3] = { "Start","From save","Exit" };
-	/**
-				 *	
-			*  *   *  *
-			***	    ***
-	**/
-	vector_ship_player.push_back(point(game, 20, LINES - 3, "|"));
+
+	vector_ship_player.push_back(point(game, 19, LINES - 3, "|"));
+	vector_ship_player.push_back(point(game, 20, LINES - 3, "<"));
 	vector_ship_player.push_back(point(game, 20, LINES - 2, "*"));
+	vector_ship_player.push_back(point(game, 21, LINES - 3, "{"));
 	vector_ship_player.push_back(point(game, 21, LINES - 2, "*"));
+	vector_ship_player.push_back(point(game, 22, LINES - 5, "_"));
+	vector_ship_player.push_back(point(game, 22, LINES - 4, "("));
+	vector_ship_player.push_back(point(game, 22, LINES - 3, "/"));
 	vector_ship_player.push_back(point(game, 22, LINES - 2, "*"));
-	vector_ship_player.push_back(point(game, 23, LINES - 3, "*"));
-	vector_ship_player.push_back(point(game, 24, LINES - 4, "*"));
-	vector_ship_player.push_back(point(game, 24, LINES - 5, "|"));
-	vector_ship_player.push_back(point(game, 25, LINES - 3, "*"));
-	vector_ship_player.push_back(point(game, 26, LINES - 2, "*"));
+	vector_ship_player.push_back(point(game, 23, LINES - 5, "_"));
+	vector_ship_player.push_back(point(game, 23, LINES - 4, "*"));
+	vector_ship_player.push_back(point(game, 23, LINES - 3, "/"));
+	vector_ship_player.push_back(point(game, 24, LINES - 5, "/"));
+	vector_ship_player.push_back(point(game, 24, LINES - 3, "_"));
+	vector_ship_player.push_back(point(game, 25, LINES - 5, "\\"));
+	vector_ship_player.push_back(point(game, 25, LINES - 4, "^"));
+	vector_ship_player.push_back(point(game, 25, LINES - 3, "_"));
+	vector_ship_player.push_back(point(game, 26, LINES - 5, "_"));
+	vector_ship_player.push_back(point(game, 26, LINES - 4, "*"));
+	vector_ship_player.push_back(point(game, 26, LINES - 3, "\\"));
+	vector_ship_player.push_back(point(game, 27, LINES - 5, "_"));
+	vector_ship_player.push_back(point(game, 27, LINES - 4, ")"));
+	vector_ship_player.push_back(point(game, 27, LINES - 3, "\\"));
 	vector_ship_player.push_back(point(game, 27, LINES - 2, "*"));
+	vector_ship_player.push_back(point(game, 28, LINES - 3, "}"));
 	vector_ship_player.push_back(point(game, 28, LINES - 2, "*"));
-	vector_ship_player.push_back(point(game, 28, LINES - 3, "|"));
+	vector_ship_player.push_back(point(game, 29, LINES - 3, ">"));
+	vector_ship_player.push_back(point(game, 29, LINES - 2, "*"));
+	vector_ship_player.push_back(point(game, 30, LINES - 3, "|"));
 
+
+	srand(time(0));
+
+	int x_start = rand() % COLS + 1;
+	vector_ship_enemy.push_back(point(game, x_start, 2, "^"));
+	vector_ship_enemy.push_back(point(game, x_start, 1, "*"));
+	vector_ship_enemy.push_back(point(game, x_start + 1, 1, "*"));
+	vector_ship_enemy.push_back(point(game, x_start + 2, 1, "*"));
+	vector_ship_enemy.push_back(point(game, x_start + 3, 2, "*"));
+	vector_ship_enemy.push_back(point(game, x_start + 4, 3, "*"));
+	vector_ship_enemy.push_back(point(game, x_start + 4, 4, "|"));
+	vector_ship_enemy.push_back(point(game, x_start + 5, 2, "*"));
+	vector_ship_enemy.push_back(point(game, x_start + 6, 1, "*"));
+	vector_ship_enemy.push_back(point(game, x_start + 7, 1, "*"));
+	vector_ship_enemy.push_back(point(game, x_start + 8, 1, "*"));
+	vector_ship_enemy.push_back(point(game, x_start + 8, 2, "^"));
+
+
+	
 	ship* ship_player = new ship(&vector_ship_player);
-
+	vector<ship*> ships_enemy;
+	ships_enemy.push_back(new ship(&vector_ship_enemy));
 	thread input(_input,game,menu,ship_player, _g_i);
 
 	
@@ -162,11 +206,10 @@ void _draw(WINDOW *game,WINDOW *menu, game_inputs* _g_i) {
 	{
 		//
 		//wclear(menu);
-		//wclear(game);
+		
 		//this_thread::sleep_for(100ms);
 		//
 		wrefresh(game);
-		wrefresh(menu);
 		box(game, 0, 0);
 		box(menu, 1, 1);
 		for (size_t i = 0; i < sizeof(menu_items) / sizeof(menu_items[0]); i++)
@@ -184,17 +227,56 @@ void _draw(WINDOW *game,WINDOW *menu, game_inputs* _g_i) {
 			mvwprintw(menu, 10 + i, 5, menu_items[i].c_str());
 		}
 
+
 		if (_g_i->getStart())
 		{
 			
 			
+			if (ships_enemy.size()<5)
+			{
+				
+				int x_start = rand() % COLS + 1;
+
+				vector_ship_enemy.clear();
+
+				vector_ship_enemy.push_back(point(game, x_start, 2, "^"));
+				vector_ship_enemy.push_back(point(game, x_start, 1, "*"));
+				vector_ship_enemy.push_back(point(game, x_start + 1, 1, "*"));
+				vector_ship_enemy.push_back(point(game, x_start + 2, 1, "*"));
+				vector_ship_enemy.push_back(point(game, x_start + 3, 2, "*"));
+				vector_ship_enemy.push_back(point(game, x_start + 4, 3, "*"));
+				vector_ship_enemy.push_back(point(game, x_start + 4, 4, "|"));
+				vector_ship_enemy.push_back(point(game, x_start + 5, 2, "*"));
+				vector_ship_enemy.push_back(point(game, x_start + 6, 1, "*"));
+				vector_ship_enemy.push_back(point(game, x_start + 7, 1, "*"));
+				vector_ship_enemy.push_back(point(game, x_start + 8, 1, "*"));
+				vector_ship_enemy.push_back(point(game, x_start + 8, 2, "^"));
+				ships_enemy.push_back(new ship(&vector_ship_enemy));
+			}
+			
+
 			//wprintw(menu, "%X", kek.size());
 			vector<point> kek = ship_player->getWeapons();
 			for (auto weapon_point : kek) {
-				if (vector_bullet.size() >= BULLET_COUNT)
-					break;
+				
 				vector_bullet.push_back(bullet(weapon_point));
 
+			}
+
+			for (auto& enemy : ships_enemy) {
+				
+				
+				if (enemy->ifLeft())
+					enemy->moveX(randint(COLS, 0));
+				else if (enemy->ifRight())
+					enemy->moveX(randint(0, -COLS));
+				else enemy->moveX(randint(1, -1));
+				enemy->moveY(1);
+				enemy->show();
+				if (enemy->isDown())
+				{
+					ships_enemy.erase(find(ships_enemy.cbegin(), ships_enemy.cend(), enemy));
+				}
 			}
 			for (auto& b:vector_bullet)
 			{
@@ -207,11 +289,14 @@ void _draw(WINDOW *game,WINDOW *menu, game_inputs* _g_i) {
 				
 					//vector_bullet.erase(find_if(vector_bullet.begin(), vector_bullet.end(), [&](bullet& p) {return p.getY() < 1; }));
 			}
-			this_thread::sleep_for(std::chrono::milliseconds(_g_i->getFrameRate()));
+			//this_thread::sleep_for(std::chrono::milliseconds(_g_i->getFrameRate()));
 			ship_player->show();
+			
 		}
-
-		//refresh();
+		
+		wrefresh(menu);
+		//wclear(game);
+	//	refresh();
 		//
 	}
 	input.join();
@@ -239,6 +324,7 @@ int main(int argc, char* argv[]) {
 	clear();
 	WINDOW* game = newwin(LINES, COLS-20, 0, 0);
 	WINDOW* menu = newwin(LINES, 19, 0, COLS / 2);
+	nodelay(game, true);
 	mvwin(game, 0, 0);
 	mvwin(menu, 0, COLS - 20);
 	keypad(stdscr, true);
