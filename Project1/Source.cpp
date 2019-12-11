@@ -108,6 +108,7 @@ void _input(WINDOW*game,WINDOW *menu,ship *p,game_inputs *_g_i) {
 			break;
 		}		
 		case 0x20: {
+			//Beep(9000,500);
 			_g_i->setShoot(true);
 			break;
 		}
