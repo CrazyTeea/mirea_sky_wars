@@ -8,7 +8,7 @@
 
 using namespace std;
 
-#define BULLET_COUNT 3
+#define BULLET_COUNT 2
 
 int randint(int max, int min = 0)
 {
@@ -23,6 +23,7 @@ struct game_inputs
 private:
 	bool exit;
 	bool start;
+	bool shoot;
 	int m_item;
 	int frame_rate;
 
@@ -32,15 +33,20 @@ public:
 		m_item = 0;
 		start = 0;
 		frame_rate = 100;
+		shoot = false;
 	}
 	game_inputs(const bool& _exit, const int& _m_item,const bool& _start,const int& f_r) {
 		exit = _exit;
 		m_item = _m_item;
 		start = _start;
 		frame_rate = f_r;
+		shoot = false;
 	}
 	const bool& getExit() {
 		return exit;
+	}
+	const bool& canShoot() {
+		return shoot;
 	}
 	const int& getMenuItem() {
 		return m_item;
@@ -56,6 +62,9 @@ public:
 	}
 	void setStart(const bool& s) {
 		start = s;
+	}
+	void setShoot(const bool& s) {
+		shoot = s;
 	}
 	int& getFrameRate() {
 		return frame_rate;
@@ -96,6 +105,10 @@ void _input(WINDOW*game,WINDOW *menu,ship *p,game_inputs *_g_i) {
 			else
 				_g_i->setMenuItem(_g_i->getMenuItem() + 1);
 			//p->moveY(&y);
+			break;
+		}		
+		case 0x20: {
+			_g_i->setShoot(true);
 			break;
 		}
 		case 0xD:
@@ -143,7 +156,7 @@ void _draw(WINDOW *game,WINDOW *menu, game_inputs* _g_i) {
 
 	vector <point> vector_ship_player;
 	vector <point> vector_ship_enemy;
-	vector <bullet> vector_bullet;
+	vector <bullet*> vector_bullet;
 	string menu_items[3] = { "Start","From save","Exit" };
 
 	vector_ship_player.push_back(point(game, 19, LINES - 3, "|"));
@@ -204,12 +217,7 @@ void _draw(WINDOW *game,WINDOW *menu, game_inputs* _g_i) {
 
 	while (!_g_i->getExit())
 	{
-		//
-		//wclear(menu);
 		
-		//this_thread::sleep_for(100ms);
-		//
-		wrefresh(game);
 		box(game, 0, 0);
 		box(menu, 1, 1);
 		for (size_t i = 0; i < sizeof(menu_items) / sizeof(menu_items[0]); i++)
@@ -232,7 +240,7 @@ void _draw(WINDOW *game,WINDOW *menu, game_inputs* _g_i) {
 		{
 			
 			
-			if (ships_enemy.size()<5)
+			if (ships_enemy.size()<BULLET_COUNT)
 			{
 				
 				int x_start = rand() % COLS + 1;
@@ -253,51 +261,59 @@ void _draw(WINDOW *game,WINDOW *menu, game_inputs* _g_i) {
 				vector_ship_enemy.push_back(point(game, x_start + 8, 2, "^"));
 				ships_enemy.push_back(new ship(&vector_ship_enemy));
 			}
-			
-
-			//wprintw(menu, "%X", kek.size());
+		
 			vector<point> kek = ship_player->getWeapons();
-			for (auto weapon_point : kek) {
-				
-				vector_bullet.push_back(bullet(weapon_point));
-
+			if (_g_i->canShoot())
+			{
+				for (auto weapon_point : kek) {
+					vector_bullet.push_back(new bullet(weapon_point));
+				}
+				_g_i->setShoot(false);
 			}
 
 			for (auto& enemy : ships_enemy) {
 				
-				
+				bool del = false;
 				if (enemy->ifLeft())
 					enemy->moveX(randint(COLS, 0));
 				else if (enemy->ifRight())
 					enemy->moveX(randint(0, -COLS));
 				else enemy->moveX(randint(1, -1));
-				enemy->moveY(1);
-				enemy->show();
-				if (enemy->isDown())
+				enemy->moveY(randint(1, 0));
+				
+				for (auto& _b : vector_bullet)
 				{
+					enemy->decrementHealth(*_b);
+					if (enemy->isDie())
+					{
+						del = true;
+						
+					}
+				}
+				enemy->show();
+				if (enemy->isDown() || del)
+				{
+					enemy->clearP();
 					ships_enemy.erase(find(ships_enemy.cbegin(), ships_enemy.cend(), enemy));
 				}
 			}
-			for (auto& b:vector_bullet)
+			for (auto& b1:vector_bullet)
 			{
-				//wattroff(game, COLOR_PAIR(3));
-			//	wattron(game, COLOR_PAIR(3));
-				if (b.getY() < 0)
-					vector_bullet.clear();
-				b.move(true);
-				b.show();
 				
-					//vector_bullet.erase(find_if(vector_bullet.begin(), vector_bullet.end(), [&](bullet& p) {return p.getY() < 1; }));
+				b1->move(true);
+				b1->show();
+				if (b1->getY() < -LINES) {
+					vector_bullet.erase(vector_bullet.begin());
+				}
 			}
-			//this_thread::sleep_for(std::chrono::milliseconds(_g_i->getFrameRate()));
+			this_thread::sleep_for(std::chrono::milliseconds(_g_i->getFrameRate()));
 			ship_player->show();
 			
 		}
 		
+		wrefresh(game);
 		wrefresh(menu);
-		//wclear(game);
-	//	refresh();
-		//
+
 	}
 	input.join();
 }

@@ -25,3 +25,9 @@ const int& bullet::getY()
 	return _pointers.getY();
 }
 
+const int& bullet::getX()
+{
+	return _pointers.getX();
+	// TODO: вставьте здесь оператор return
+}
+

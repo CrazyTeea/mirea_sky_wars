@@ -15,9 +15,9 @@ private:
 	int y;
 	WINDOW* _window;
 	const char *_ch;
-	void cleanPoint();
+	
 public:
-
+	
 	point();
 	point(WINDOW *w,int _x, int _y,const char *_char);
 	void moveY(const int& _y);
@@ -31,5 +31,6 @@ public:
 	void show();
 	void setWindow(WINDOW* w);
 	WINDOW* getWindow();
+	void cleanPoint();
 };
 

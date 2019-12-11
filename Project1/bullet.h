@@ -16,5 +16,6 @@ public:
 	void move(const bool& up);
 	void show();
 	const int& getY();
+	const int& getX();
 };
 

@@ -3,6 +3,7 @@
 ship::ship(std::vector<point>* _pointers)
 {
 	pointers = *_pointers;
+	health = 2;
 }
 
 void ship::moveY(const int& y)
@@ -55,5 +56,29 @@ bool ship::isUp()
 
 bool ship::isDown()
 {
-	return std::find_if(pointers.begin(), pointers.end(), [](point _p) {return _p.getY() > LINES; }) != pointers.end() ? true : false;
+	return std::find_if(pointers.begin(), pointers.end(), [](point _p) {return _p.getY() > LINES+1; }) != pointers.end() ? true : false;
+}
+
+void ship::decrementHealth(bullet& b)
+{
+	bool d = false;
+	for (auto& p : pointers) {
+		if (p.getX()==b.getX() && p.getY()==b.getY())
+		{
+			d = true;
+		}
+	}
+	if (d) health--;
+}
+
+const bool& ship::isDie()
+{
+	return health <= 0 ? true : false;
+	// TODO: вставьте здесь оператор return
+}
+
+void ship::clearP()
+{
+	for (auto& p : pointers)
+		p.cleanPoint();
 }
