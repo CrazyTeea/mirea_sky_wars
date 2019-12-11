@@ -2,6 +2,7 @@
 #include <thread>
 #include <string>
 #include <random>
+#include <fstream>
 //#include <curses.h>
 #include "ship.h"
 #include "bullet.h"
@@ -26,6 +27,7 @@ private:
 	bool shoot;
 	int m_item;
 	int frame_rate;
+	int game_count;
 
 public:
 	game_inputs() {
@@ -34,6 +36,7 @@ public:
 		start = 0;
 		frame_rate = 100;
 		shoot = false;
+		game_count = 1;
 	}
 	game_inputs(const bool& _exit, const int& _m_item,const bool& _start,const int& f_r) {
 		exit = _exit;
@@ -41,6 +44,16 @@ public:
 		start = _start;
 		frame_rate = f_r;
 		shoot = false;
+		game_count = 1;
+	}
+	void incC() {
+		game_count++;
+	}
+	void decC(){
+		game_count--;
+	}
+	int	getC() {
+		return game_count;
 	}
 	const bool& getExit() {
 		return exit;
@@ -68,6 +81,9 @@ public:
 	}
 	int& getFrameRate() {
 		return frame_rate;
+	}
+	void setC(const int& c) {
+		game_count = c;
 	}
 
 };
@@ -123,7 +139,10 @@ void _input(WINDOW*game,WINDOW *menu,ship *p,game_inputs *_g_i) {
 			}
 			case 1: {
 				//beep();
-
+				ofstream f("save.txt");
+				f.clear();
+				f << _g_i->getC();
+				f.close();
 				break;
 			}
 			case 2: {
@@ -210,18 +229,22 @@ void _draw(WINDOW *game,WINDOW *menu, game_inputs* _g_i) {
 
 	
 	ship* ship_player = new ship(&vector_ship_player);
+	ship_player->setHealth(50);
 	vector<ship*> ships_enemy;
 	ships_enemy.push_back(new ship(&vector_ship_enemy));
 	thread input(_input,game,menu,ship_player, _g_i);
 
+	int menuS = sizeof(menu_items) / sizeof(menu_items[0]);
 	
-
+	bool die = false;
 	while (!_g_i->getExit())
 	{
-		
+
+		wrefresh(game);
+		wrefresh(menu);
 		box(game, 0, 0);
 		box(menu, 1, 1);
-		for (size_t i = 0; i < sizeof(menu_items) / sizeof(menu_items[0]); i++)
+		for (size_t i = 0; i < menuS; i++)
 		{
 			if (i == _g_i->getMenuItem()) {
 				mvwaddch(menu, 10 + i, 4, '>');
@@ -235,6 +258,7 @@ void _draw(WINDOW *game,WINDOW *menu, game_inputs* _g_i) {
 			}
 			mvwprintw(menu, 10 + i, 5, menu_items[i].c_str());
 		}
+		wprintw(menu,"\n     scores: %d" ,_g_i->getC());
 
 
 		if (_g_i->getStart())
@@ -287,12 +311,19 @@ void _draw(WINDOW *game,WINDOW *menu, game_inputs* _g_i) {
 					enemy->decrementHealth(*_b);
 					if (enemy->isDie())
 					{
+						_g_i->incC();
 						del = true;
-						
 					}
 				}
 				enemy->show();
-				if (enemy->isDown() || del)
+				bool dow = enemy->isDown();
+				if (dow)
+				{
+					ship_player->decrementHealth();
+					_g_i->decC();
+
+				}
+				if (dow || del)
 				{
 					enemy->clearP();
 					ships_enemy.erase(find(ships_enemy.cbegin(), ships_enemy.cend(), enemy));
@@ -308,12 +339,23 @@ void _draw(WINDOW *game,WINDOW *menu, game_inputs* _g_i) {
 				}
 			}
 			this_thread::sleep_for(std::chrono::milliseconds(_g_i->getFrameRate()));
+			die = ship_player->isDie();
+			if (die)
+			{
+				_g_i->setStart(false);
+				_g_i->setExit(true);
+			}
 			ship_player->show();
 			
 		}
-		
+
+
+	}
+	if (die)
+	{
+		wclear(game);
+		wprintw(game, "GANE OVER! PRESS ANY KEY");
 		wrefresh(game);
-		wrefresh(menu);
 
 	}
 	input.join();
@@ -346,6 +388,14 @@ int main(int argc, char* argv[]) {
 	mvwin(menu, 0, COLS - 20);
 	keypad(stdscr, true);
 	game_inputs _game_inputs(false, 0, false,frame_rate);
+
+	ifstream f("save.txt");
+	int n = 0;
+	f.read((char*)&(n),sizeof(n));
+	f.close();
+
+	_game_inputs.setC(n);
+	f.close();
 
 	thread draw(_draw,game, menu,&_game_inputs);
 	draw.join();

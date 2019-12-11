@@ -71,6 +71,11 @@ void ship::decrementHealth(bullet& b)
 	if (d) health--;
 }
 
+void ship::decrementHealth()
+{
+	health--;
+}
+
 const bool& ship::isDie()
 {
 	return health <= 0 ? true : false;
@@ -81,4 +86,9 @@ void ship::clearP()
 {
 	for (auto& p : pointers)
 		p.cleanPoint();
+}
+
+void ship::setHealth(const int& h)
+{
+	health = h;
 }

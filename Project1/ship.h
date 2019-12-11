@@ -20,7 +20,9 @@ public:
 	bool isUp();
 	bool isDown();
 	void decrementHealth(bullet& b);
+	void decrementHealth();
 	const bool& isDie();
 	void clearP();
+	void setHealth(const int& h);
 };
 
