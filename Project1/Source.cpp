@@ -177,7 +177,7 @@ void _draw(WINDOW *game,WINDOW *menu, game_inputs* _g_i) {
 	vector <point> vector_ship_player;
 	vector <point> vector_ship_enemy;
 	vector <bullet*> vector_bullet;
-	string menu_items[3] = { "Start","From save","Exit" };
+	string menu_items[3] = { "Start","save","Exit" };
 
 	vector_ship_player.push_back(point(game, 19, LINES - 3, "|"));
 	vector_ship_player.push_back(point(game, 20, LINES - 3, "<"));
