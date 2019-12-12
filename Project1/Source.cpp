@@ -137,7 +137,7 @@ void _input(WINDOW*game,WINDOW *menu,ship *p,game_inputs *_g_i) {
 			switch (_g_i->getMenuItem())
 			{
 			case 0: {
-				p->setHealth(5);
+				p->setHealth(1);
 				_g_i->setStart(true);
 				break;
 			}
@@ -242,7 +242,6 @@ void _draw(WINDOW *game,WINDOW *menu, game_inputs* _g_i) {
 
 	
 	ship* ship_player = new ship(&vector_ship_player);
-	ship_player->setHealth(5);
 	vector<ship*> ships_enemy;
 	ships_enemy.push_back(new ship(&vector_ship_enemy));
 	thread input(_input,game,menu,ship_player, _g_i);
@@ -354,12 +353,14 @@ void _draw(WINDOW *game,WINDOW *menu, game_inputs* _g_i) {
 			}
 			this_thread::sleep_for(std::chrono::milliseconds(_g_i->getFrameRate()));
 			die = ship_player->isDie();
+			ship_player->show();
 			if (die)
 			{
 				_g_i->setC(0);
 				_g_i->setStart(false);
+				//wclear(game);
 			}
-			ship_player->show();
+			
 			
 		}
 
@@ -367,9 +368,9 @@ void _draw(WINDOW *game,WINDOW *menu, game_inputs* _g_i) {
 		{
 			wclear(game);
 			wprintw(game, "GANE OVER! PRESS ANY KEY");
-			wrefresh(game);
-
+			this_thread::sleep_for(std::chrono::milliseconds(_g_i->getFrameRate()));
 		}
+		//this_thread::sleep_for(std::chrono::milliseconds(_g_i->getFrameRate()));
 	}
 	
 	input.join();
