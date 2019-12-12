@@ -3,6 +3,7 @@
 #include <string>
 #include <random>
 #include <fstream>
+#include <mutex>
 //#include <curses.h>
 #include "ship.h"
 #include "bullet.h"
@@ -10,6 +11,8 @@
 using namespace std;
 
 #define BULLET_COUNT 2
+
+static mutex _mutex;
 
 int randint(int max, int min = 0)
 {
@@ -91,7 +94,7 @@ public:
 void _input(WINDOW*game,WINDOW *menu,ship *p,game_inputs *_g_i) {
 	while (!_g_i->getExit())
 	{
-		
+		_mutex.lock();
 		int key = getch();
 		switch (key)
 		{
@@ -116,7 +119,7 @@ void _input(WINDOW*game,WINDOW *menu,ship *p,game_inputs *_g_i) {
 			break;
 		}
 		case KEY_DOWN: {
-			if (_g_i->getMenuItem() > 1)
+			if (_g_i->getMenuItem() > 2)
 				_g_i->setMenuItem(0);
 			else
 				_g_i->setMenuItem(_g_i->getMenuItem() + 1);
@@ -134,6 +137,7 @@ void _input(WINDOW*game,WINDOW *menu,ship *p,game_inputs *_g_i) {
 			switch (_g_i->getMenuItem())
 			{
 			case 0: {
+				p->setHealth(5);
 				_g_i->setStart(true);
 				break;
 			}
@@ -146,6 +150,15 @@ void _input(WINDOW*game,WINDOW *menu,ship *p,game_inputs *_g_i) {
 				break;
 			}
 			case 2: {
+				ifstream f("save.txt");
+				int n = 0;
+				f.read((char*) & (n), sizeof(n));
+				f.close();
+				_g_i->setC(n);
+				f.close();
+				break;
+			}
+			case 3: {
 				_g_i->setExit(true);
 			}
 			default:
@@ -168,7 +181,7 @@ void _input(WINDOW*game,WINDOW *menu,ship *p,game_inputs *_g_i) {
 			break;
 		}
 
-
+		_mutex.unlock();
 	}
 }
 
@@ -177,7 +190,7 @@ void _draw(WINDOW *game,WINDOW *menu, game_inputs* _g_i) {
 	vector <point> vector_ship_player;
 	vector <point> vector_ship_enemy;
 	vector <bullet*> vector_bullet;
-	string menu_items[3] = { "Start","save","Exit" };
+	string menu_items[4] = { "Start","Save","Load","Exit" };
 
 	vector_ship_player.push_back(point(game, 19, LINES - 3, "|"));
 	vector_ship_player.push_back(point(game, 20, LINES - 3, "<"));
@@ -229,7 +242,7 @@ void _draw(WINDOW *game,WINDOW *menu, game_inputs* _g_i) {
 
 	
 	ship* ship_player = new ship(&vector_ship_player);
-	ship_player->setHealth(50);
+	ship_player->setHealth(5);
 	vector<ship*> ships_enemy;
 	ships_enemy.push_back(new ship(&vector_ship_enemy));
 	thread input(_input,game,menu,ship_player, _g_i);
@@ -258,7 +271,8 @@ void _draw(WINDOW *game,WINDOW *menu, game_inputs* _g_i) {
 			}
 			mvwprintw(menu, 10 + i, 5, menu_items[i].c_str());
 		}
-		wprintw(menu,"\n     scores: %d" ,_g_i->getC());
+		wprintw(menu, "\n     scores: %d", _g_i->getC());
+		wprintw(menu, "\n     Live: %d", ship_player->getHealth());
 
 
 		if (_g_i->getStart())
@@ -342,22 +356,22 @@ void _draw(WINDOW *game,WINDOW *menu, game_inputs* _g_i) {
 			die = ship_player->isDie();
 			if (die)
 			{
+				_g_i->setC(0);
 				_g_i->setStart(false);
-				_g_i->setExit(true);
 			}
 			ship_player->show();
 			
 		}
 
+		if (die)
+		{
+			wclear(game);
+			wprintw(game, "GANE OVER! PRESS ANY KEY");
+			wrefresh(game);
 
+		}
 	}
-	if (die)
-	{
-		wclear(game);
-		wprintw(game, "GANE OVER! PRESS ANY KEY");
-		wrefresh(game);
-
-	}
+	
 	input.join();
 }
 
@@ -384,19 +398,10 @@ int main(int argc, char* argv[]) {
 	WINDOW* game = newwin(LINES, COLS-20, 0, 0);
 	WINDOW* menu = newwin(LINES, 19, 0, COLS / 2);
 	nodelay(game, true);
-	mvwin(game, 0, 0);
+	mvwin(game, 0, 0); 
 	mvwin(menu, 0, COLS - 20);
 	keypad(stdscr, true);
 	game_inputs _game_inputs(false, 0, false,frame_rate);
-
-	ifstream f("save.txt");
-	int n = 0;
-	f.read((char*)&(n),sizeof(n));
-	f.close();
-
-	_game_inputs.setC(n);
-	f.close();
-
 	thread draw(_draw,game, menu,&_game_inputs);
 	draw.join();
 	delwin(game);

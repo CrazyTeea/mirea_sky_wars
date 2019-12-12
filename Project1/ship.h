@@ -24,5 +24,6 @@ public:
 	const bool& isDie();
 	void clearP();
 	void setHealth(const int& h);
+	int getHealth();
 };
 

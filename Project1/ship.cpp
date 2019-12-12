@@ -92,3 +92,8 @@ void ship::setHealth(const int& h)
 {
 	health = h;
 }
+
+int ship::getHealth()
+{
+	return health;
+}
